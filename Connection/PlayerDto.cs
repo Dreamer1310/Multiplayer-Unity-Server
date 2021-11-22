@@ -4,13 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UnityMovementServer
+namespace UnityMovementServer.Connection
 {
-    public class Player<T>
+    public class PlayerDto
     {
-        public T Client { get; set; }
         public Int64 ID { get; set; }
         public Double X { get; set; }
         public Double Z { get; set; }
+
+        public PlayerDto(Player<IGameClient> player)
+        {
+            ID = player.ID;
+            X = player.X;
+            Z = player.Z;
+        }
     }
 }

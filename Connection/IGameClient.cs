@@ -9,8 +9,10 @@ namespace UnityMovementServer.Connection
     public interface IGameClient
     {
         public Task State(StateDto state);
+        public Task PlayerData(PlayerDto player);
         public Task Moved(Double x, Double y);
         public Task MovementError(String errorString);
-        public Task PlayerJoined(Int64 playerID);
+        public Task PlayerJoined(PlayerDto playerID);
+        public Task PlayerDisconnected(Int64 playerID);
     }
 }

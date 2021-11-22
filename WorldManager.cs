@@ -9,13 +9,22 @@ namespace UnityMovementServer
 {
     public class WorldManager
     {
-        public static Dictionary<Int64, Player> Players;
+        private readonly static Dictionary<Int64, Player<IGameClient>> _players = new Dictionary<Int64, Player<IGameClient>>();
+        public static List<Player<IGameClient>> Players => _players.Values.ToList();
 
-
-        public static void NewPlayer(Int64 playerId)
+        public static void Add(Player<IGameClient> player)
         {
-            var player = new Player { ID = playerId };
-            Players.Add(playerId, player);
+            _players.Add(player.ID, player);
+        }
+
+        public static void Remove(Int64 playerID)
+        {
+            _players.Remove(playerID);
+        }
+
+        public static Player<IGameClient> GetPlayer(Int64 playerId)
+        {
+            return Players.FirstOrDefault(x => x.ID == playerId);
         }
     }
 }

@@ -8,7 +8,6 @@ namespace UnityMovementServer.Connection
 {
     public class StateDto
     {
-        public Int64 MyID { get; set; }
-        public List<Player> Players { get; set; }
+        public List<PlayerDto> Players { get; set; }
     }
 }

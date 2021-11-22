@@ -9,14 +9,53 @@ namespace UnityMovementServer.Connection
 {
     public class GameHub : Hub<IGameClient>
     {
-        private static Int64 count = 0;
         public override Task OnConnectedAsync()
         {
-            count++;
-            Clients.All.PlayerJoined(count);
+            HandleUserConnet();
             return base.OnConnectedAsync();
         }
 
+        public override Task OnDisconnectedAsync(Exception exception)
+        {
+            var id = Int64.Parse(Context.UserIdentifier);
+            var player = WorldManager.GetPlayer(id);
+
+            if (player != null)
+            {
+                WorldManager.Remove(id);
+                Clients.All.PlayerDisconnected(id);
+            }
+
+            return base.OnDisconnectedAsync(exception);
+        }
+
+        private void HandleUserConnet()
+        {
+            Int64 id = Int64.Parse(Context.UserIdentifier);
+            var player = new Player<IGameClient>()
+            {
+                ID = id,
+                Client = Clients.Caller,
+                X = 7,
+                Z = 7
+            };
+
+            WorldManager.Add(player);
+            Clients.Caller.PlayerData(new PlayerDto(player));
+            Clients.Others.PlayerJoined(new PlayerDto(player));
+            Clients.Caller.State(new StateDto
+            {
+                Players = WorldManager.Players.Select(x => new PlayerDto(x)).ToList()
+            });
+        }
+
+        public void Disconnect()
+        {
+            var id = Int64.Parse(Context.UserIdentifier);
+            WorldManager.Remove(id);
+            Clients.All.PlayerDisconnected(id);
+        }
+    
         public void MoveForward()
         {
         }
